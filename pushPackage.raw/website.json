@@ -1,8 +1,8 @@
 {
-    "websiteName": "Safari Push Demo",
-    "websitePushID": "web.net.kandutech",
-    "allowedDomains": ["http://kandutech.net", "https://kandutech.net"],
-    "urlFormatString": "http://kandutech.net/%@",
+    "websiteName": "{WEBSITENAME}",
+    "websitePushID": "{PUSHID}",
+    "allowedDomains": [{ALLOWEDDOMAINS}],
+    "urlFormatString": "{URLFORMAT}",
     "authenticationToken": "{AUTHTOKEN}",
-    "webServiceURL": "https://kandutech.net"
+    "webServiceURL": "{WEBSERVICEURL}"
 }

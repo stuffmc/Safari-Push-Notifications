@@ -69,8 +69,8 @@ function checkPerms() {
 	document.getElementById("reqperm").style.display = "none";
 	document.getElementById("granted").style.display = "none";
 	document.getElementById("denied").style.display = "none";
-	
-	var pResult = window.safari.pushNotification.permission('web.net.kandutech');
+
+	var pResult = window.safari.pushNotification.permission('<?php echo WEBSITE_UID; ?>');
 	if(pResult.permission === 'default') {
 		//request permission
 		document.getElementById("reqperm").style.display = "";
@@ -86,11 +86,11 @@ function checkPerms() {
 }
 
 function requestPermissions() {
-	window.safari.pushNotification.requestPermission('https://kandutech.net', 'web.net.kandutech', {"id": id}, function(c) {
+	window.safari.pushNotification.requestPermission('<?php echo WEBSERVICE_URL; ?>', '<?php echo WEBSITE_UID; ?>', {"id": id}, function(c) {
 		if(c.permission === 'granted') {
 			document.getElementById("reqperm").style.display = "none";
 			document.getElementById("granted").style.display = "";
-			token = pResult.deviceToken;
+			token = c.deviceToken;
 		}
 		else if(c.permission === 'denied') {
 			document.getElementById("reqperm").style.display = "none";
@@ -109,7 +109,7 @@ function do_push() {
 		}
     });
 	if(checksOut == true) {
-		$.post("https://kandutech.net/v1/push/"+id, {"title": document.getElementById("not_title").value, "body": document.getElementById("not_body").value, "button": document.getElementById("not_button").value});
+		$.post("/v1/push/"+id, {"title": document.getElementById("not_title").value, "body": document.getElementById("not_body").value, "button": document.getElementById("not_button").value});
 		$("#form input").val("");
 		$("#modal_scrim").fadeOut(300);
 	}
@@ -172,7 +172,7 @@ function do_push() {
         	<div class="btn btn-primary" onClick="$('#modal_scrim').fadeIn(300); document.getElementById('not_title').focus();">Create New Push Notification</div>
             <hr>
             <div style="position: absolute; margin-top: -30px; text-align: center; width: 100%; color: #CCC;">OR</div>
-            <div style="overflow: auto;"> 
+            <div style="overflow: auto;">
             <div style="border-radius: 8px; box-shadow: inset rgba(0,0,0,0.3) 0 1px 2px; border: 1px solid #A0A0A0; height: 50px; width: 50px; font-size: 50px; float: left; margin: 20px; margin-top: 15px; margin-left: 135px; text-align: center; padding-top: 30px;"><?php echo substr($id, 0, 1); ?></div>
             <div style="border-radius: 8px; box-shadow: inset rgba(0,0,0,0.3) 0 1px 2px; border: 1px solid #A0A0A0; height: 50px; width: 50px; font-size: 50px; float: left; margin: 20px; margin-top: 15px; text-align: center; padding-top: 30px;"><?php echo substr($id, 1, 1); ?></div>
             <div style="border-radius: 8px; box-shadow: inset rgba(0,0,0,0.3) 0 1px 2px; border: 1px solid #A0A0A0; height: 50px; width: 50px; font-size: 50px; float: left; margin: 20px; margin-top: 15px; text-align: center; padding-top: 30px;"><?php echo substr($id, 2, 1); ?></div>

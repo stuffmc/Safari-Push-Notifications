@@ -1,8 +1,17 @@
-Safari-Push-Notifications
-=========================
+Safari Push Notification Server
+===============================
 
-Demo showing Safari 7.0's native push notifications on Mac OS X 10.9 (Mavericks)
+Reference Server for pushing Safari Notifications via Apple Push Notification Service
+For use with Safari Push Plugin for Wordpress (https://github.com/surrealroad/wp-safari-push)
 
-index.php is the actual API, it's where the pushPackage is built, notifications are pushed and devices are added/removed.
+Requirements:
+SSL-based server, PHP, Apple developer account
 
-If you have any questions or need help, find me on Twitter: @mynamesconnor
+Usage:
+ - Upload all files, and be sure to include both your Certificate.p12 and Website_Push_ID_Production_Certificate.pem from Apple.
+ - Edit config-sample.php and save it as config.php
+ - Replace the images in pushPackage.raw/icon.iconset/
+
+For more information, refer to Apple's documentation at https://developer.apple.com/notifications/safari-push-notifications/
+
+Based on Safari-Push-Notifications by Connor LaCombe (https://github.com/connorlacombe/Safari-Push-Notifications)

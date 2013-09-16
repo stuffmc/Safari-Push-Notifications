@@ -1,14 +1,12 @@
 <?php
 
 // This script creates a valid push package.
-// This script assumes that the website.json file and iconset already exist. 
-// This script creates a manifest and signature, zips the folder, and returns the push package. 
+// This script assumes that the website.json file and iconset already exist.
+// This script creates a manifest and signature, zips the folder, and returns the push package.
 
 // Use this script as an example to generate a push package dynamically.
 
-
-$certificate_path = "Cert";     // Change this to the path where your certificate is located
-$certificate_password = "Pass"; // Change this to the certificate's import password
+require_once("config.php");
 
 // Convenience function that returns an array of raw files needed to construct the package.
 function raw_files() {
@@ -33,7 +31,25 @@ function copy_raw_push_package_files($package_dir) {
 			$wjson = file_get_contents("$package_dir/$raw_file");
 			unlink("$package_dir/$raw_file");
 			$ff = fopen("$package_dir/$raw_file", "x");
-			fwrite($ff, str_replace("{AUTHTOKEN}", "authenticationToken_".$id, $wjson)); // we have to add "authenticationToken_" because it has to be at least 16 for some reason thx apple
+			fwrite($ff, str_replace(
+				array(
+					"{AUTHTOKEN}",
+					"{WEBSITENAME}",
+					"{PUSHID}",
+					"{ALLOWEDDOMAINS}",
+					"{URLFORMAT}",
+					"{WEBSERVICEURL}",
+				),
+				array(
+					"authenticationToken_".$id,
+					WEBSITE_NAME,
+					WEBSITE_UID,
+					ALLOWED_DOMAINS,
+					URL_FORMAT,
+					WEBSERVICE_URL,
+				),
+				$wjson
+			)); // we have to add "authenticationToken_" because it has to be at least 16 for some reason thx apple
 			fclose($ff);
 		}
     }
@@ -99,7 +115,7 @@ function package_raw_data($package_dir) {
 
 // Creates the push package, and returns the path to the archive.
 function create_push_package() {
-    global $certificate_path, $certificate_password, $id;
+    global $id;
 
     // Create a temporary directory in which to assemble the push package
     $package_dir = '/tmp/pushPackage' . time();
@@ -110,7 +126,7 @@ function create_push_package() {
 
     copy_raw_push_package_files($package_dir, $id);
     create_manifest($package_dir);
-    create_signature($package_dir, $certificate_path, $certificate_password);
+    create_signature($package_dir, CERTIFICATE_PATH, CERTIFICATE_PASSWORD);
     $package_path = package_raw_data($package_dir);
 
     return $package_path;

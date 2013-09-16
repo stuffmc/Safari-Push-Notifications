@@ -2,9 +2,9 @@
 header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 
-require ("mysqli.inc.php");
+require_once ("mysqli.inc.php");
 
-function apache_request_headers() {
+if(!function_exists('apache_request_headers')) {
   $arh = array();
   $rx_http = '/\AHTTP_/';
   foreach($_SERVER as $key => $val) {
@@ -44,7 +44,7 @@ if ($function == "pushPackages") { //Build and output push package to Safari
 		http_response_code(500);
 		die;
 	}
-	
+
 	header("Content-type: application/zip");
 	echo file_get_contents($package_path);
 	die;
@@ -79,7 +79,41 @@ else if ($function == "verifyCode") { //function for the mobile page of the demo
 		echo ("invalid");
 	}
 }
-else if ($function == "push") { //pushes a notification
+else if ($function == "push" && !isset($path[2])) { //pushes a notification to all devices (requires authorization code)
+	$title = $_REQUEST["title"];
+	$body = $_REQUEST["body"];
+	$button = $_REQUEST["button"];
+	$urlargs = $_REQUEST["urlargs"];
+	$auth = $_REQUEST["auth"];
+	if($auth == AUTHORISATION_CODE) {
+		// notify all users
+		$result = mysqli_do("SELECT * FROM push");
+
+		$deviceTokens = array();
+
+		while ($r = $result->fetch_assoc()) {
+			$deviceTokens[] = $r["token"];
+			//echo $r["token"]."<br/>";
+		}
+		$payload['aps']['alert'] = array(
+			"title" => $title,
+			"body" => $body,
+			"action" => $button
+		);
+		$payload['aps']['url-args'] = array(
+			$urlargs
+		);
+		$payload = json_encode($payload);
+
+		$apns = connect_apns(APNS_HOST, APNS_PORT, PRODUCTION_CERTIFICATE_PATH);
+
+		foreach($deviceTokens as $deviceToken) {
+			$write = send_payload($apns, $deviceToken, $payload);
+		}
+		fclose($apns);
+	}
+}
+else if ($function == "push") { //pushes a notification to a specific device
 	$title = $_REQUEST["title"];
 	$body = $_REQUEST["body"];
 	$button = $_REQUEST["button"];
@@ -96,15 +130,17 @@ else if ($function == "push") { //pushes a notification
 		"clicked"
 	);
 	$payload = json_encode($payload);
-	$apnsHost = 'gateway.push.apple.com';
-	$apnsPort = 2195;
-	$apnsCert = 'apns-cert.pem';
-	$streamContext = stream_context_create();
-	stream_context_set_option($streamContext, 'ssl', 'local_cert', $apnsCert);
-	$apns = stream_socket_client('ssl://' . $apnsHost . ':' . $apnsPort, $error, $errorString, 2, STREAM_CLIENT_CONNECT, $streamContext);
-	$apnsMessage = chr(0) . chr(0) . chr(32) . pack('H*', str_replace(' ', '', $deviceToken)) . chr(0) . chr(strlen($payload)) . $payload;
-	fwrite($apns, $apnsMessage);
+	$apns = connect_apns(APNS_HOST, APNS_PORT, PRODUCTION_CERTIFICATE_PATH);
+	$write = send_payload($apns, $deviceToken, $payload);
 	fclose($apns);
+}
+else if ($function == "log") { //writes a log message
+	$title = $_REQUEST["title"];
+	$body = $_REQUEST["body"];
+	$log = json_decode($body);
+	$fp = fopen('logs/request.log', 'a');
+	fwrite($fp, $log['logs']);
+	fclose($fp);
 }
 else { // just other demo-related stuff
 	if($path[0] == "clicked") {
@@ -121,6 +157,17 @@ else { // just other demo-related stuff
 	else if(stristr($_SERVER['HTTP_USER_AGENT'], "iphone") !== false) {
 		include ("mobile.html");
 	}
+}
+
+function connect_apns($apnsHost, $apnsPort, $apnsCert) {
+	$streamContext = stream_context_create();
+	stream_context_set_option($streamContext, 'ssl', 'local_cert', PRODUCTION_CERTIFICATE_PATH);
+	return stream_socket_client('ssl://' . $apnsHost . ':' . $apnsPort, $error, $errorString, 60, STREAM_CLIENT_CONNECT, $streamContext);
+}
+
+function send_payload($handle, $deviceToken, $payload) {
+	$apnsMessage = chr(0) . chr(0) . chr(32) . pack('H*', str_replace(' ', '', $deviceToken)) . chr(0) . chr(strlen($payload)) . $payload;
+	return fwrite($handle, $apnsMessage);
 }
 
 ?>
