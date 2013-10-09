@@ -20,7 +20,7 @@ else {
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Safari Push Notification Demo</title>
+<title>Safari Push Notification Service</title>
 
 <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
 <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
@@ -151,11 +151,10 @@ function do_push() {
         </div>
     </div>
 	<div class="box">
-    	<div style="font-weight: 500; font-size: 20px; margin: 10px;">Safari Push Notification Demo</div>
+    	<div style="font-weight: 500; font-size: 20px; margin: 10px;">Safari Push Notification Service for <?php echo WEBSITE_NAME; ?></div>
         <!-- old safari lolz -->
         <div style="margin-top: 100px; text-align: center; display: none;" id="old">
-        	You need Safari 7.0 on OS X Mavericks to run this demo!
-            <div id="firefoxlol" style="display: none; font-size: 11px; margin-top: 20px;">u serious with firefox right now tho? maybe don't.</div>
+        	You need Safari 7.0 on OS X Mavericks to view your notification status.
         </div>
         <!-- checking permissions -->
         <div style="margin-top: 100px; text-align: center; display: none;" id="reqperm">
@@ -179,37 +178,14 @@ function do_push() {
             <div style="border-radius: 8px; box-shadow: inset rgba(0,0,0,0.3) 0 1px 2px; border: 1px solid #A0A0A0; height: 50px; width: 50px; font-size: 50px; float: left; margin: 20px; margin-top: 15px; text-align: center; padding-top: 30px;"><?php echo substr($id, 3, 1); ?></div>
             </div>
             <div>
-            Type in this code at http://kandutech.net on a mobile device.
+            Type in this code at <?php echo WEBSERVICE_URL; ?> on a mobile device.
             <div style="font-size: 11px;">(You can close safari now if you want.)</div>
             </div>
         </div>
     </div>
     <div style="position: absolute; top: 50%; margin-top: 170px; left: 50%; width: 600px; text-align: center; margin-left: -300px; text-shadow: #fff 0 1px 0;">
-    <a href="https://twitter.com/mynamesconnor" class="twitter-follow-button" data-show-count="false">Follow @mynamesconnor</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-    	<a href="https://twitter.com/share" class="twitter-share-button" data-url="https://kandutech.net" data-via="mynamesconnor" data-related="mynamesconnor">Tweet</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-<!-- Place this tag where you want the +1 button to render. -->
-<div class="g-plusone" data-size="medium" data-href="https://kandutech.net"></div>
-
-<!-- Place this tag after the last +1 button tag. -->
-<script type="text/javascript">
-  (function() {
-    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-    po.src = 'https://apis.google.com/js/plusone.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-  })();
-</script><br><div style="font-size: 12px;">Idea thanks to: <a href="http://9to5mac.com/2013/06/26/demo-of-the-first-public-website-using-safaris-new-native-push-notifications-feature-video/" target="_blank">9to5mac.com</a></div>
+    Reference Safari Push Notification Service by <a href="http://www.surrealroad.com">Surreal Road</a>, based on <a href="https://github.com/connorlacombe/Safari-Push-Notifications">Safari Push Notifications</a> by Connor LaCombe, available on <a href="https://github.com/surrealroad/Safari-Push-Notifications">GitHub</a>
     </div>
-    <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-42055607-1', 'kandutech.net');
-  ga('send', 'pageview');
-
-</script>
+    </div>
 </body>
 </html>
