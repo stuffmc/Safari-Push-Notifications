@@ -79,7 +79,7 @@ else if ($function == "verifyCode") { //function for the mobile page of the demo
 		echo ("invalid");
 	}
 }
-else if ($function == "push" && !isset($path[2])) { //pushes a notification to all devices (requires authorization code)
+else if ($function == "push" && !isset($path[2])) { //pushes a notification
 	$title = $_REQUEST["title"];
 	$body = $_REQUEST["body"];
 	$button = $_REQUEST["button"];
@@ -104,16 +104,20 @@ else if ($function == "push" && !isset($path[2])) { //pushes a notification to a
 			$urlargs
 		);
 		$payload = json_encode($payload);
+		//echo $payload."<br/>";
 
 		$apns = connect_apns(APNS_HOST, APNS_PORT, PRODUCTION_CERTIFICATE_PATH);
+		//echo $apns."<br/>";
 
 		foreach($deviceTokens as $deviceToken) {
 			$write = send_payload($apns, $deviceToken, $payload);
+			//echo $write."<br/>";
 		}
 		fclose($apns);
+
 	}
 }
-else if ($function == "push") { //pushes a notification to a specific device
+else if ($function == "push") { //pushes a notification
 	$title = $_REQUEST["title"];
 	$body = $_REQUEST["body"];
 	$button = $_REQUEST["button"];
@@ -146,16 +150,13 @@ else { // just other demo-related stuff
 	if($path[0] == "clicked") {
 		include ("click.html");
 	}
-	else if (stristr($_SERVER['HTTP_USER_AGENT'], "iphone") === false) {
+	else {
 		if($_SERVER["HTTPS"] != "on") {
 		   header("HTTP/1.1 301 Moved Permanently");
 		   header("Location: https://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"]);
 		   exit();
 		}
 		include ("desktop.php");
-	}
-	else if(stristr($_SERVER['HTTP_USER_AGENT'], "iphone") !== false) {
-		include ("mobile.html");
 	}
 }
 

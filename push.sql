@@ -1,0 +1,5 @@
+CREATE TABLE `push` (
+  `id` int(11) NOT NULL DEFAULT '0',
+  `token` varchar(70) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
