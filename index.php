@@ -60,18 +60,18 @@ else if ($function == "devices") { // safari is adding or deleting the device
 	}
 	$token = $path[2];
 	if ($_SERVER['REQUEST_METHOD'] == "POST") { //Adding
-		$r = mysqli_do("SELECT * FROM push WHERE id='$id'");
+		$r = mysqli_do("SELECT * FROM push WHERE token='$token'");
 		if (mysqli_num_rows($r) == 0) {
-			mysqli_do("INSERT INTO push (id, token) VALUES ('$id', '$token')");
+			mysqli_do("INSERT INTO push (token) VALUES ('$token')");
 		}
 	}
 	else if ($_SERVER['REQUEST_METHOD'] == "DELETE") { //Deleting
-		mysqli_do("DELETE FROM push WHERE id='$id' LIMIT 1");
+		mysqli_do("DELETE FROM push WHERE token='$token' LIMIT 1");
 	}
 }
-else if ($function == "verifyCode") { //function for the mobile page of the demo
-	$id = $path[2];
-	$r = mysqli_do("SELECT * FROM push WHERE id='$id'");
+else if ($function == "verifyCode") { //verify a token
+	$token = $path[2];
+	$r = mysqli_do("SELECT * FROM push WHERE id='$token'");
 	if(mysqli_num_rows($r) > 0) {
 		echo("valid");
 	}
