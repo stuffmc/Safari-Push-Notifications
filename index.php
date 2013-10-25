@@ -5,6 +5,7 @@ header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
 require_once ("mysqli.inc.php");
 
 if(!function_exists('apache_request_headers')) {
+  function apache_request_headers() {
   $arh = array();
   $rx_http = '/\AHTTP_/';
   foreach($_SERVER as $key => $val) {
