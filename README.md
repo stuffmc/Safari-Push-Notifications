@@ -8,7 +8,7 @@ Requirements:
 SSL-based server, PHP, Apple developer account
 
 Usage:
- - Upload all files, and be sure to include both your Certificate.p12 and Website_Push_ID_Production_Certificate.pem from Apple.
+ - Upload all files to the root (eg. http://push.myserver.com/), and be sure to include both your Certificate.p12 and Website_Push_ID_Production_Certificate.pem from Apple.
  - Create a mysql database as per push.sql
  - Edit config-sample.php and save it as config.php
  - Replace the images in pushPackage.raw/icon.iconset/
