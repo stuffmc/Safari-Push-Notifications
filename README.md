@@ -6,7 +6,7 @@ For use with Safari Push Plugin for Wordpress (https://github.com/surrealroad/wp
 
 Requirements
 ----
-SSL-based server, PHP, Apple developer account
+SSL-based server (NOT A self-signed one), PHP, Apple developer account
 
 Usage
 ----
@@ -18,7 +18,7 @@ Usage
 
 Common issues
 ----
- - You must be using an SSL (HTTPS) server
+ - You must be using an SSL (HTTPS) server, signed by a recognised authority. If you're looking for a free service, we've been using StartCom (https://www.startcom.org/) which works well.
  - Requests must be mapped to /v1/request (for example https://push.yoursite.com/v1/pushPackages must be a valid URL) - the included .htaccess file should do this for you if you upload the files to the server root
  - You will probably need to specify domains with and without the "www." part in the config file (e.g. define('ALLOWED_DOMAINS', '"http://example.com", "http://www.example.com"'); )
 
