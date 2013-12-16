@@ -54,7 +54,11 @@ body {
 var token = "";
 var id = "<?php echo $id; ?>";
 window.onload = function() {
-	if(window.navigator.userAgent.indexOf('7.0 Safari') > -1) {
+	var ua = window.navigator.userAgent,
+		safari = ua.indexOf ( "Safari" ),
+		version = ua.substring(0,safari).substring(ua.substring(0,safari).lastIndexOf("/")+1);
+
+	if(safari > 0 && parseInt(version) >=7) {
 		checkPerms();
 	}
 	else {
