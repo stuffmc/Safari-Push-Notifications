@@ -127,6 +127,20 @@ else if ($function == "log") { //writes a log message
 	fwrite($fp, $log['logs']);
 	fclose($fp);
 }
+else if ($function == "list") { //return a list of subscribers
+	$auth = $_REQUEST["auth"];
+	if($auth == AUTHORISATION_CODE) {
+		$query = "SELECT * FROM push";
+		$result = mysqli_do($query);
+
+		$rows = array();
+
+		while ($r = $result->fetch_assoc()) {
+		    $rows[] = $r;
+		}
+		echo json_encode($rows);
+	}
+}
 else { // just other demo-related stuff
 	if($path[0] == "clicked") {
 		include ("click.html");
