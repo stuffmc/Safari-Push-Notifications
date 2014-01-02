@@ -34,8 +34,8 @@ $function = $path[1];
 if ($function == "pushPackages") { //Build and output push package to Safari
 	$body = @file_get_contents("php://input");
 	$body = json_decode($body, true);
-	global $id;
-	$id = $body["id"];
+	global $userid;
+	$userid = $body["id"];
 
 	// return pushPackage
 
@@ -52,19 +52,19 @@ if ($function == "pushPackages") { //Build and output push package to Safari
 	die;
 }
 else if ($function == "devices") { // safari is adding or deleting the device
-	$id = "";
+	$userid = "";
 	foreach(apache_request_headers() as $header=>$value) { // this is the authorization key we packaged in the website.json pushPackage
-		if($header == "AUTHORIZATION") {
+		if($header == "Authorization") {
 			$value = explode("_", $value);
-			$id = $value[1];
+			if(isset($value[1]) && $value[1] >0) $userid = filter_var($value[1], FILTER_SANITIZE_NUMBER_INT);
 			break;
 		}
 	}
-	$token = $path[2];
+	$token = filter_var($path[2], FILTER_SANITIZE_STRING);
 	if ($_SERVER['REQUEST_METHOD'] == "POST") { //Adding
 		$r = mysqli_do("SELECT * FROM push WHERE token='$token'");
 		if (mysqli_num_rows($r) == 0) {
-			mysqli_do("INSERT INTO push (token) VALUES ('$token')");
+			mysqli_do("INSERT INTO push (token, userid) VALUES ('$token', '$userid')");
 		}
 	}
 	else if ($_SERVER['REQUEST_METHOD'] == "DELETE") { //Deleting
@@ -72,8 +72,8 @@ else if ($function == "devices") { // safari is adding or deleting the device
 	}
 }
 else if ($function == "verifyCode") { //verify a token
-	$token = $path[2];
-	$r = mysqli_do("SELECT * FROM push WHERE id='$token'");
+	$token = filter_var($path[2], FILTER_SANITIZE_STRING);
+	$r = mysqli_do("SELECT * FROM push WHERE token='$token'");
 	if(mysqli_num_rows($r) > 0) {
 		echo("valid");
 	}
@@ -90,8 +90,8 @@ else if ($function == "push") { //pushes a notification
 	if($auth == AUTHORISATION_CODE) {
 		$query = "SELECT * FROM push";
 		if(isset($path[2])) {
-			$id = $path[2];
-			$query .= " WHERE id='$id'";// notify specific user
+			$token = filter_var($path[2], FILTER_SANITIZE_STRING);
+			$query .= " WHERE token='$token'";// notify specific user
 		}
 		$result = mysqli_do($query);
 
@@ -99,7 +99,6 @@ else if ($function == "push") { //pushes a notification
 
 		while ($r = $result->fetch_assoc()) {
 			$deviceTokens[] = $r["token"];
-			//echo $r["token"]."<br/>";
 		}
 		$payload['aps']['alert'] = array(
 			"title" => $title,
@@ -110,14 +109,11 @@ else if ($function == "push") { //pushes a notification
 			$urlargs
 		);
 		$payload = json_encode($payload);
-		//echo $payload."<br/>";
 
 		$apns = connect_apns(APNS_HOST, APNS_PORT, PRODUCTION_CERTIFICATE_PATH);
-		//echo $apns."<br/>";
 
 		foreach($deviceTokens as $deviceToken) {
 			$write = send_payload($apns, $deviceToken, $payload);
-			//echo $write."<br/>";
 		}
 		fclose($apns);
 

@@ -23,7 +23,7 @@ function raw_files() {
 
 // Copies the raw push package files to $package_dir.
 function copy_raw_push_package_files($package_dir) {
-	global $id;
+	global $userid;
     mkdir($package_dir . '/icon.iconset');
     foreach (raw_files() as $raw_file) {
         copy("pushPackage.raw/$raw_file", "$package_dir/$raw_file");
@@ -41,7 +41,7 @@ function copy_raw_push_package_files($package_dir) {
 					"{WEBSERVICEURL}",
 				),
 				array(
-					"authenticationToken_".$id,
+					"authenticationToken_".$userid,
 					WEBSITE_NAME,
 					WEBSITE_UID,
 					ALLOWED_DOMAINS,
