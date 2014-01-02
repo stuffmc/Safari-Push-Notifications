@@ -81,15 +81,19 @@ else if ($function == "verifyCode") { //verify a token
 		echo ("invalid");
 	}
 }
-else if ($function == "push" && !isset($path[2])) { //pushes a notification
+else if ($function == "push") { //pushes a notification
 	$title = $_REQUEST["title"];
 	$body = $_REQUEST["body"];
 	$button = $_REQUEST["button"];
 	$urlargs = $_REQUEST["urlargs"];
 	$auth = $_REQUEST["auth"];
 	if($auth == AUTHORISATION_CODE) {
-		// notify all users
-		$result = mysqli_do("SELECT * FROM push");
+		$query = "SELECT * FROM push";
+		if(isset($path[2])) {
+			$id = $path[2];
+			$query .= " WHERE id='$id'";// notify specific user
+		}
+		$result = mysqli_do($query);
 
 		$deviceTokens = array();
 
@@ -118,27 +122,6 @@ else if ($function == "push" && !isset($path[2])) { //pushes a notification
 		fclose($apns);
 
 	}
-}
-else if ($function == "push") { //pushes a notification
-	$title = $_REQUEST["title"];
-	$body = $_REQUEST["body"];
-	$button = $_REQUEST["button"];
-	$id = $path[2];
-	$r = mysqli_do("SELECT * FROM push WHERE id='$id'");
-	$r = mysqli_fetch_assoc($r);
-	$deviceToken = $r["token"];
-	$payload['aps']['alert'] = array(
-		"title" => $title,
-		"body" => $body,
-		"action" => $button
-	);
-	$payload['aps']['url-args'] = array(
-		"clicked"
-	);
-	$payload = json_encode($payload);
-	$apns = connect_apns(APNS_HOST, APNS_PORT, PRODUCTION_CERTIFICATE_PATH);
-	$write = send_payload($apns, $deviceToken, $payload);
-	fclose($apns);
 }
 else if ($function == "log") { //writes a log message
 	$title = $_REQUEST["title"];
