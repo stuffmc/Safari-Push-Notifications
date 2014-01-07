@@ -28,7 +28,7 @@ During the push registration process you should receive two files, the `.p12` an
 The p12 file is used to create a push package (to request the user to accept notifications from your site).
 The cer file is used to actually send out push notifications by the server (to establish communication with APNS), but it seems it must be converted into a `.pem` file first, which the official documentation doesn't mention.
 
-To perform this conversion, use the command `openssl x509 -in website_aps_production.cer -inform der -out apns-cert.pem -nodes -clcerts` in Terminal.
+To perform this conversion, use the command `openssl x509 -in website_aps_production.cer -inform der -out apns-cert.pem -nokeys -clcerts` in Terminal.
 
 You can then test that you can connect to APNS using this file with the command `openssl s_client -connect gateway.push.apple.com:2195 -CAfile apns-cert.pem`
 
