@@ -32,6 +32,17 @@ To perform this conversion, use the command `openssl x509 -in website_aps_produc
 
 You can then test that you can connect to APNS using this file with the command `openssl s_client -connect gateway.push.apple.com:2195 -CAfile apns-cert.pem`
 
+Sending a test push
+----
+If you've configured everything correctly, and are at the point where you are successfully able to subscribe to notifications through Safari, you can manually send a test notification from Terminal with:
+
+`curl --data-urlencode "title=Test" --data-urlencode "body=This is a test" --data-urlencode "button=View" --data-urlencode "urlargs=/" --data-urlencode "auth=your authentication code" https://push.yoursite.com/v1/push`
+
+or if you know the specific device token to send the push to, replace `https://push.yoursite.com/v1/push` with `https://push.yoursite.com/v1/push/devicetoken/`
+
+You can also do this in a browser, like so:
+`https://push.yoursite.com/v1/push/?title=Test&body=This%20is%20a%20test&button=View&urlargs=%2F&auth=your_authentication_code` (for a specific device, that's `https://push.yoursite.com/v1/push/devicetoken/?title=Test&body=This%20is%20a%20test&button=View&urlargs=%2F&auth=your_authentication_code`)
+
 Where to get more information
 ----
  - Apple's documentation: https://developer.apple.com/notifications/safari-push-notifications/
