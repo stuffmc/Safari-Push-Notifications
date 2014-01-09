@@ -1,19 +1,37 @@
 <?php
-$id = "";
-if(!isset($_COOKIE["pushid"])) {
-	$validId = false;
-	while($validId == false) {
-		$id = substr(number_format(time() * rand(),0,'',''),0,4);
-		$r = mysqli_do("SELECT * FROM push WHERE id='$id'");
-		if(mysqli_num_rows($r) == 0) {
-			$validId = true;
-			break;
-		}
-	}
-	setcookie("pushid", $id, time()+60*60*24*30);
+// http://wezfurlong.org/blog/2006/nov/http-post-from-php-without-curl/
+function do_post_request($url, $data, $optional_headers = null)
+{
+  $params = array('http' => array(
+              'method' => 'POST',
+              'content' => $data
+            ));
+  if ($optional_headers !== null) {
+    $params['http']['header'] = $optional_headers;
+  }
+  $ctx = stream_context_create($params);
+  $fp = @fopen($url, 'rb', false, $ctx);
+  if (!$fp) {
+    throw new Exception("Problem with $url, $php_errormsg");
+  }
+  $response = @stream_get_contents($fp);
+  if ($response === false) {
+    throw new Exception("Problem reading data from $url, $php_errormsg");
+  }
+  return $response;
 }
-else {
-	$id = $_COOKIE["pushid"];
+
+if($_REQUEST['test'] && $_REQUEST['token']) {
+	$data = array(
+		"title" => strip_tags($_REQUEST['title']),
+		"body" => strip_tags($_REQUEST['body']),
+		"button" => strip_tags($_REQUEST['button']),
+		"urlargs" => "/",
+		"auth" => AUTHORISATION_CODE
+	);
+	$pushurl = WEBSERVICE_URL."/v1/push/".strip_tags($_REQUEST['token']);
+	echo do_post_request($pushurl, http_build_query($data));
+	exit();
 }
 ?>
 <!doctype html>
@@ -56,16 +74,14 @@ var id = "<?php echo $id; ?>";
 window.onload = function() {
 	var ua = window.navigator.userAgent,
 		safari = ua.indexOf ( "Safari" ),
+		chrome = ua.indexOf ( "Chrome" ),
 		version = ua.substring(0,safari).substring(ua.substring(0,safari).lastIndexOf("/")+1);
 
-	if(safari > 0 && parseInt(version) >=7) {
+	if(chrome ==-1 && safari > 0 && parseInt(version, 10) >=7) {
 		checkPerms();
 	}
 	else {
 		document.getElementById("old").style.display = "";
-		if(window.navigator.userAgent.indexOf("Firefox") > -1) {
-			document.getElementById("firefoxlol").style.display = "";
-		}
 	}
 };
 
@@ -75,6 +91,7 @@ function checkPerms() {
 	document.getElementById("denied").style.display = "none";
 
 	var pResult = window.safari.pushNotification.permission('<?php echo WEBSITE_UID; ?>');
+
 	if(pResult.permission === 'default') {
 		//request permission
 		document.getElementById("reqperm").style.display = "";
@@ -90,7 +107,7 @@ function checkPerms() {
 }
 
 function requestPermissions() {
-	window.safari.pushNotification.requestPermission('<?php echo WEBSERVICE_URL; ?>', '<?php echo WEBSITE_UID; ?>', {"id": id}, function(c) {
+	window.safari.pushNotification.requestPermission('<?php echo WEBSERVICE_URL; ?>', '<?php echo WEBSITE_UID; ?>', {}, function(c) {
 		if(c.permission === 'granted') {
 			document.getElementById("reqperm").style.display = "none";
 			document.getElementById("granted").style.display = "";
@@ -112,8 +129,13 @@ function do_push() {
 			checksOut = false;
 		}
     });
+    p = window.safari.pushNotification.permission('<?php echo WEBSITE_UID; ?>');
+    if(p.permission != 'granted') checksOut = false;
 	if(checksOut == true) {
-		$.post("/v1/push/"+id, {"title": document.getElementById("not_title").value, "body": document.getElementById("not_body").value, "button": document.getElementById("not_button").value});
+		var data = {"test":1, "token":p.deviceToken, "title": document.getElementById("not_title").value, "body": document.getElementById("not_body").value, "button": document.getElementById("not_button").value};
+		var jqxhr = $.post("/", data)
+			.fail(function(){alert("The server responded with an error")})
+			.always(function(){console.log(data)});
 		$("#form input").val("");
 		$("#modal_scrim").fadeOut(300);
 	}
@@ -158,7 +180,7 @@ function do_push() {
     	<div style="font-weight: 500; font-size: 20px; margin: 10px;">Safari Push Notification Service for <?php echo WEBSITE_NAME; ?></div>
         <!-- old safari lolz -->
         <div style="margin-top: 100px; text-align: center; display: none;" id="old">
-        	You need Safari 7.0 on OS X Mavericks to view your notification status.
+        	You need Safari 7.0+ on Mac OS 10.9+ to view your notification status.
         </div>
         <!-- checking permissions -->
         <div style="margin-top: 100px; text-align: center; display: none;" id="reqperm">
@@ -172,19 +194,8 @@ function do_push() {
         </div>
         <!-- granted permissions -->
         <div style="margin-top: 20px; text-align: center; display: none;" id="granted">
-        	<div class="btn btn-primary" onClick="$('#modal_scrim').fadeIn(300); document.getElementById('not_title').focus();">Create New Push Notification</div>
-            <hr>
-            <div style="position: absolute; margin-top: -30px; text-align: center; width: 100%; color: #CCC;">OR</div>
-            <div style="overflow: auto;">
-            <div style="border-radius: 8px; box-shadow: inset rgba(0,0,0,0.3) 0 1px 2px; border: 1px solid #A0A0A0; height: 50px; width: 50px; font-size: 50px; float: left; margin: 20px; margin-top: 15px; margin-left: 135px; text-align: center; padding-top: 30px;"><?php echo substr($id, 0, 1); ?></div>
-            <div style="border-radius: 8px; box-shadow: inset rgba(0,0,0,0.3) 0 1px 2px; border: 1px solid #A0A0A0; height: 50px; width: 50px; font-size: 50px; float: left; margin: 20px; margin-top: 15px; text-align: center; padding-top: 30px;"><?php echo substr($id, 1, 1); ?></div>
-            <div style="border-radius: 8px; box-shadow: inset rgba(0,0,0,0.3) 0 1px 2px; border: 1px solid #A0A0A0; height: 50px; width: 50px; font-size: 50px; float: left; margin: 20px; margin-top: 15px; text-align: center; padding-top: 30px;"><?php echo substr($id, 2, 1); ?></div>
-            <div style="border-radius: 8px; box-shadow: inset rgba(0,0,0,0.3) 0 1px 2px; border: 1px solid #A0A0A0; height: 50px; width: 50px; font-size: 50px; float: left; margin: 20px; margin-top: 15px; text-align: center; padding-top: 30px;"><?php echo substr($id, 3, 1); ?></div>
-            </div>
-            <div>
-            Type in this code at <?php echo WEBSERVICE_URL; ?> on a mobile device.
-            <div style="font-size: 11px;">(You can close safari now if you want.)</div>
-            </div>
+        	 <div>You have granted this website permission to send push notifications.</div>
+        	<div class="btn btn-primary" onClick="$('#modal_scrim').fadeIn(300); document.getElementById('not_title').focus();">Send Yourself a Push Notification</div>
         </div>
     </div>
     <div style="position: absolute; top: 50%; margin-top: 170px; left: 50%; width: 600px; text-align: center; margin-left: -300px; text-shadow: #fff 0 1px 0;">
