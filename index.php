@@ -112,12 +112,18 @@ else if ($function == "push") { //pushes a notification
 		$payload = json_encode($payload);
 
 		$apns = connect_apns(APNS_HOST, APNS_PORT, PRODUCTION_CERTIFICATE_PATH);
+		$success = 0;
 
 		foreach($deviceTokens as $deviceToken) {
 			$write = send_payload($apns, $deviceToken, $payload);
+			if($write) $success++;
 		}
 		fclose($apns);
-
+		echo $success." device(s) notified";
+		exit();
+	} else {
+		echo "Invalid authorisation";
+		exit();
 	}
 }
 else if ($function == "log") { //writes a log message
@@ -143,17 +149,12 @@ else if ($function == "list") { //return a list of subscribers
 	}
 }
 else { // just other demo-related stuff
-	if($path[0] == "clicked") {
-		include ("click.html");
+	if($_SERVER["HTTPS"] != "on") {
+	   header("HTTP/1.1 301 Moved Permanently");
+	   header("Location: https://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"]);
+	   exit();
 	}
-	else {
-		if($_SERVER["HTTPS"] != "on") {
-		   header("HTTP/1.1 301 Moved Permanently");
-		   header("Location: https://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"]);
-		   exit();
-		}
-		include ("desktop.php");
-	}
+	include ("desktop.php");
 }
 
 function connect_apns($apnsHost, $apnsPort, $apnsCert) {
