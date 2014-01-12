@@ -119,7 +119,7 @@ else if ($function == "push") { //pushes a notification
 			if($write) $success++;
 		}
 		fclose($apns);
-		echo $success." device(s) notified";
+		echo $success." of ".count($deviceTokens)." device(s) notified";
 		exit();
 	} else {
 		echo "Invalid authorisation";
