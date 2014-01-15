@@ -41,7 +41,7 @@ If you've configured everything correctly, and are at the point where you are su
 or if you know the specific device token to send the push to, replace `https://push.yoursite.com/v1/push` with `https://push.yoursite.com/v1/push/devicetoken/`
 
 You can also do this in a browser, like so:
-`https://push.yoursite.com/v1/push/?title=Test&body=This%20is%20a%20test&button=View&urlargs=%2F&auth=your_authentication_code` (for a specific device, that's `https://push.yoursite.com/v1/push/devicetoken/?title=Test&body=This%20is%20a%20test&button=View&urlargs=%2F&auth=your_authentication_code`)
+`https://push.yoursite.com/v1/push?title=Test&body=This%20is%20a%20test&button=View&urlargs=%2F&auth=your_authentication_code` (for a specific device, that's `https://push.yoursite.com/v1/push/devicetoken/?title=Test&body=This%20is%20a%20test&button=View&urlargs=%2F&auth=your_authentication_code`)
 
 Where to get more information
 ----
