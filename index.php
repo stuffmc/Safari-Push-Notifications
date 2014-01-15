@@ -90,7 +90,7 @@ else if ($function == "push") { //pushes a notification
 	$auth = $_REQUEST["auth"];
 	if($auth == AUTHORISATION_CODE) {
 		$query = "SELECT * FROM push";
-		if(isset($path[2])) {
+		if(isset($path[2]) && $path[2]) {
 			$token = filter_var($path[2], FILTER_SANITIZE_STRING);
 			$query .= " WHERE token='$token'";// notify specific user
 		}
