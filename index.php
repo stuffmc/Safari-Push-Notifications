@@ -148,6 +148,17 @@ else if ($function == "list") { //return a list of subscribers
 		echo json_encode($rows);
 	}
 }
+else if ($function == "count") { //return the count of subscribers
+	$query = "SELECT * FROM push";
+	$result = mysqli_do($query);
+
+	$rows = array();
+
+	while ($r = $result->fetch_assoc()) {
+	    $rows[] = $r;
+	}
+	echo json_encode(count($rows));
+}
 else { // just other demo-related stuff
 	if($_SERVER["HTTPS"] != "on") {
 	   header("HTTP/1.1 301 Moved Permanently");
