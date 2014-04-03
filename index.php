@@ -111,12 +111,15 @@ else if ($function == "push") { //pushes a notification
 		);
 		$payload = json_encode($payload);
 
-		$apns = connect_apns(APNS_HOST, APNS_PORT, PRODUCTION_CERTIFICATE_PATH);
 		$success = 0;
+		$counter = 0;
+		$connectLimit = 1000;
 
 		foreach($deviceTokens as $deviceToken) {
+			if($counter % $connectLimit == 0) $apns = connect_apns(APNS_HOST, APNS_PORT, PRODUCTION_CERTIFICATE_PATH);
 			$write = send_payload($apns, $deviceToken, $payload);
 			if($write) $success++;
+			$counter++;
 		}
 		fclose($apns);
 		echo $success." of ".count($deviceTokens)." device(s) notified";
