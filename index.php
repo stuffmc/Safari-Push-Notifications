@@ -53,7 +53,7 @@ if ($function == "pushPackages") { //Build and output push package to Safari
 	die;
 }
 else if ($function == "devices") { // safari is adding or deleting the device
-	$userid = "";
+	$userid = 0;
 	foreach(apache_request_headers() as $header=>$value) { // this is the authorization key we packaged in the website.json pushPackage
 		if($header == "Authorization") {
 			$value = explode("_", $value);
