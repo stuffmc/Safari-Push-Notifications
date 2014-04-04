@@ -110,6 +110,10 @@ else if ($function == "push") { //pushes a notification
 			$urlargs
 		);
 		$payload = json_encode($payload);
+		if(strlen($payload)>256) {
+			echo "Payload too large";
+			exit();
+		}
 
 		$success = 0;
 		$counter = 0;
@@ -178,6 +182,7 @@ function connect_apns($apnsHost, $apnsPort, $apnsCert) {
 }
 
 function send_payload($handle, $deviceToken, $payload) {
+	// https://developer.apple.com/library/mac/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101
 	$apnsMessage = chr(0) . chr(0) . chr(32) . pack('H*', str_replace(' ', '', $deviceToken)) . chr(0) . chr(strlen($payload)) . $payload;
 	return fwrite($handle, $apnsMessage);
 }
