@@ -184,7 +184,7 @@ function connect_apns($apnsHost, $apnsPort, $apnsCert) {
 function send_payload($handle, $deviceToken, $payload) {
 	// https://developer.apple.com/library/mac/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/CommunicatingWIthAPS.html#//apple_ref/doc/uid/TP40008194-CH101
 	$apnsMessage = chr(0) . chr(0) . chr(32) . pack('H*', str_replace(' ', '', $deviceToken)) . chr(0) . chr(strlen($payload)) . $payload;
-	return fwrite($handle, $apnsMessage);
+	return @fwrite($handle, $apnsMessage);
 }
 
 ?>
