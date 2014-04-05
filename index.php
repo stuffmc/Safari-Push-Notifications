@@ -128,6 +128,7 @@ else if ($function == "push") { //pushes a notification
 					$retries++;
 				} else {
 					$success++;
+					break;
 				}
 			endwhile;
 		}
