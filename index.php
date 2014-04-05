@@ -116,14 +116,20 @@ else if ($function == "push") { //pushes a notification
 		}
 
 		$success = 0;
-		$counter = 0;
-		$connectLimit = 1000;
+		$retryAttempts = 3;
+		$apns = connect_apns(APNS_HOST, APNS_PORT, PRODUCTION_CERTIFICATE_PATH);
 
 		foreach($deviceTokens as $deviceToken) {
-			if($counter % $connectLimit == 0) $apns = connect_apns(APNS_HOST, APNS_PORT, PRODUCTION_CERTIFICATE_PATH);
-			$write = send_payload($apns, $deviceToken, $payload);
-			if($write) $success++;
-			$counter++;
+			$retries = 0;
+			while($retries < $retryAttempts):
+				if(!send_payload($apns, $deviceToken, $payload)) {
+					fclose($apns);
+					$apns = connect_apns(APNS_HOST, APNS_PORT, PRODUCTION_CERTIFICATE_PATH);
+					$retries++;
+				} else {
+					$success++;
+				}
+			endwhile;
 		}
 		fclose($apns);
 		echo $success." of ".count($deviceTokens)." device(s) notified";
