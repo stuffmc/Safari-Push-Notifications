@@ -11,7 +11,7 @@ SSL-based server (NOT A self-signed one), PHP, Apple developer account
 Usage
 ----
  - Register your site with Apple (refer to [this document](https://developer.apple.com/library/mac/documentation/NetworkingInternet/Conceptual/NotificationProgrammingGuideForWebsites/PushNotifications/PushNotifications.html#//apple_ref/doc/uid/TP40013225-CH3-SW1) )
- - Upload all files to the *root* (eg. `https://push.myserver.com/`), and be sure to include both your `Certificate.p1` and `Website_Push_ID_Production_Certificate.pem` from Apple.
+ - Upload all files to the *root* (eg. `https://push.myserver.com/`), and be sure to include both your `Certificate.p12` and `Website_Push_ID_Production_Certificate.pem` from Apple.
  - Create a mysql database as per `push.sql`
  - Edit `config-sample.php` and save it as `config.php`
  - Replace the images in `pushPackage.raw/icon.iconset/`
