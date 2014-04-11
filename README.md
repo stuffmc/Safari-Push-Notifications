@@ -10,17 +10,17 @@ SSL-based server (NOT A self-signed one), PHP, Apple developer account
 
 Usage
 ----
- - Register your site with Apple (refer to https://developer.apple.com/library/mac/documentation/NetworkingInternet/Conceptual/NotificationProgrammingGuideForWebsites/PushNotifications/PushNotifications.html#//apple_ref/doc/uid/TP40013225-CH3-SW1 )
- - Upload all files to the *root* (eg. https://push.myserver.com/), and be sure to include both your Certificate.p12 and Website_Push_ID_Production_Certificate.pem from Apple.
- - Create a mysql database as per push.sql
- - Edit config-sample.php and save it as config.php
- - Replace the images in pushPackage.raw/icon.iconset/
+ - Register your site with Apple (refer to [this document](https://developer.apple.com/library/mac/documentation/NetworkingInternet/Conceptual/NotificationProgrammingGuideForWebsites/PushNotifications/PushNotifications.html#//apple_ref/doc/uid/TP40013225-CH3-SW1) )
+ - Upload all files to the *root* (eg. `https://push.myserver.com/`), and be sure to include both your `Certificate.p1` and `Website_Push_ID_Production_Certificate.pem` from Apple.
+ - Create a mysql database as per `push.sql`
+ - Edit `config-sample.php` and save it as `config.php`
+ - Replace the images in `pushPackage.raw/icon.iconset/`
 
 Common issues
 ----
- - You must be using an SSL (HTTPS) server, signed by a recognised authority. If you're looking for a free service, we've been using StartCom (https://www.startcom.org/) which works well.
- - Requests must be mapped to /v1/request (for example https://push.yoursite.com/v1/pushPackages must be a valid URL) - the included .htaccess file should do this for you if you upload the files to the server root
- - You will probably need to specify domains with and without the "www." part in the config file (e.g. define('ALLOWED_DOMAINS', '"http://example.com", "http://www.example.com"'); )
+ - You must be using an SSL (HTTPS) server, signed by a recognised authority. If you're looking for a free service, we've been using [StartCom](https://www.startcom.org/) which works well.
+ - Requests must be mapped to `/v1/request` (for example `https://push.yoursite.com/v1/pushPackages` must be a valid URL) - the included `.htaccess` file should do this for you if you upload the files to the server root
+ - You will probably need to specify domains with and without the "www." part in the config file (e.g. `define('ALLOWED_DOMAINS', '"http://example.com", "http://www.example.com"');` )
 
 Generating the .pem file
 ----
