@@ -117,12 +117,18 @@ else if ($function == "push") { //pushes a notification
 
 		$success = 0;
 		$retryAttempts = 3;
+		$batchSize = 100;
+		$batchNo = 0;
 		$apns = connect_apns(APNS_HOST, APNS_PORT, PRODUCTION_CERTIFICATE_PATH);
 
 		foreach($deviceTokens as $deviceToken) {
 			$retries = 0;
 			while($retries < $retryAttempts):
-				if(!send_payload($apns, $deviceToken, $payload)) {
+				if($batchNo >= $batchSize) {
+					$batchNo = 0;
+					fclose($apns);
+					$apns = connect_apns(APNS_HOST, APNS_PORT, PRODUCTION_CERTIFICATE_PATH);
+				} elseif(!send_payload($apns, $deviceToken, $payload)) {
 					fclose($apns);
 					$apns = connect_apns(APNS_HOST, APNS_PORT, PRODUCTION_CERTIFICATE_PATH);
 					$retries++;
@@ -130,6 +136,7 @@ else if ($function == "push") { //pushes a notification
 					$success++;
 					break;
 				}
+				$batchNo++;
 			endwhile;
 		}
 		fclose($apns);
