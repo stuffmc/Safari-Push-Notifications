@@ -117,14 +117,14 @@ else if ($function == "push") { //pushes a notification
 
 		$success = 0;
 		$retryAttempts = 3;
-		$batchSize = 100;
+		$batchSize = 100; // 100 seems to be the magic number, see https://github.com/surrealroad/Safari-Push-Notifications/issues/13#issuecomment-45958321
 		$batchNo = 0;
 		$apns = connect_apns(APNS_HOST, APNS_PORT, PRODUCTION_CERTIFICATE_PATH);
 
 		foreach($deviceTokens as $deviceToken) {
 			$retries = 0;
 			while($retries < $retryAttempts):
-				if($batchNo >= $batchSize) {
+				if($batchNo >= $batchSize) { // APNS seems to ignore push requests after a certain point, so we need to reconnect
 					$batchNo = 0;
 					fclose($apns);
 					$apns = connect_apns(APNS_HOST, APNS_PORT, PRODUCTION_CERTIFICATE_PATH);
