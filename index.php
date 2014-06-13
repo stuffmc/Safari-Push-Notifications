@@ -50,6 +50,7 @@ if ($function == "pushPackages") { //Build and output push package to Safari
 
 	header("Content-type: application/zip");
 	echo file_get_contents($package_path);
+	unlink($package_path); //http://stackoverflow.com/questions/1217636/remove-file-after-time-in-php
 	die;
 }
 else if ($function == "devices") { // safari is adding or deleting the device
