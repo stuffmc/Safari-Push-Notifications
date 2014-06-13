@@ -128,6 +128,17 @@ function create_push_package() {
     create_manifest($package_dir);
     create_signature($package_dir, CERTIFICATE_PATH, CERTIFICATE_PASSWORD);
     $package_path = package_raw_data($package_dir);
+    
+    // clean up temp folder http://stackoverflow.com/questions/3338123/how-do-i-recursively-delete-a-directory-and-its-entire-contents-filessub-dirs
+    $files = new RecursiveIteratorIterator(
+	new RecursiveDirectoryIterator($package_dir, RecursiveDirectoryIterator::SKIP_DOTS),
+	RecursiveIteratorIterator::CHILD_FIRST
+    );
+    foreach ($files as $fileinfo) {
+	$todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+	$todo($fileinfo->getRealPath());
+    }
+    rmdir($package_dir);
 
     return $package_path;
 }
