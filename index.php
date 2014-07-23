@@ -149,11 +149,10 @@ else if ($function == "push") { //pushes a notification
 	}
 }
 else if ($function == "log") { //writes a log message
-	$title = $_REQUEST["title"];
-	$body = $_REQUEST["body"];
-	$log = json_decode($body);
+	$cont = file_get_contents('php://input');	
+	$log = json_decode($cont);	
 	$fp = fopen('logs/request.log', 'a');
-	fwrite($fp, $log['logs']);
+	fwrite($fp, implode("\n", $log->logs)."\n");
 	fclose($fp);
 }
 else if ($function == "list") { //return a list of subscribers
