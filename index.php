@@ -141,7 +141,7 @@ else if ($function == "push") { //pushes a notification
 			endwhile;
 		}
 		fclose($apns);
-		echo $success." of ".count($deviceTokens)." device(s) notified";
+		echo $success." of ".count($deviceTokens)." device(s) notified\n";
 		exit();
 	} else {
 		echo "Invalid authorisation";

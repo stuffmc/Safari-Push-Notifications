@@ -30,6 +30,8 @@ The cer file is used to actually send out push notifications by the server (to e
 
 To perform this conversion, use the command `openssl x509 -in website_aps_production.cer -inform DER -out apns-cert.pem -outform PEM` in Terminal. See [this Stackoverflow article](http://stackoverflow.com/questions/1762555/creating-pem-file-for-apns) for more information.
 
+[@stuffmc](http://twitter.com/stuffmc) found out that this was working better: `openssl pkcs12 -in key-chain-export.p12 -out apple_push_cert_production.pem -nodes -clcerts`
+
 You can then test that you can connect to APNS using this file with the command `openssl s_client -connect gateway.push.apple.com:2195 -CAfile apns-cert.pem`
 
 Sending a test push
